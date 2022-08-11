@@ -9,8 +9,8 @@ import "./App.css";
 function App() {
   const { isAuthenticated } = useAuth0();
   return (
-      <Grid container spacing={3}>
-      <Grid xs={12} md={12} alignItems={"center"}>
+      <Grid container spacing={2} minHeight={160} disableEqualOverflow>
+      <Grid xs={12} md={12} display="flex" justifyContent="center" alignItems="center">
         {!isAuthenticated ? (
           <Box>
             <LoginButton />
