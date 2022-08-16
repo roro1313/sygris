@@ -58,6 +58,7 @@ function App() {
       .then((res) => res.json())
       .then((response) => {
         setNodes(response);
+        console.log(nodes);
       });
   };
 
@@ -82,7 +83,6 @@ function App() {
 
   return (
     <>
-      <ContainerList nodes={nodes} />
       <Grid container spacing={2} minHeight={160} disableEqualOverflow>
         <Grid
           xs={12}
@@ -92,58 +92,78 @@ function App() {
           alignItems="center"
         >
           <Box>
-            {token.length === 0 ? (
+            {token.length === 0 && (
               <Button variant="contained" onClick={Login}>
                 LOGIN
               </Button>
-            ) : (
-              <></>
             )}
             <Button variant="contained" onClick={NodeList}>
               SHOW FULL LIST
             </Button>
           </Box>
-           <Box>
+          <Box>
             {nodes.length !== 0 ? (
               Object.values(nodes).map((node, index) => {
                 return (
-                  <Box key={index}>
-                    <Accordion>
-                      <AccordionSummary expandIcon={"🔼"}>
-                        <Typography variant="h5">
-                          {node.id} - {node.name}
-                        </Typography>
-                      </AccordionSummary>
-                      <AccordionDetails>
-                        {node.parentId !== node.id ? (
-                          <Typography>No hay subnodos</Typography>
-                        ) : (
-                          <Typography>{node.parentId}</Typography>
-                        )}
-                        <Button variant="contained" onClick={AddElement}>
-                          Añadir nodo
-                        </Button>
-                        <br />
-                        <br />
-                        <input
-                          type="text"
-                          value={name}
-                          placeholder="Nombre"
-                          onChange={(e) => setName(e.target.value)}
-                        />
-                        <input
-                          type="text"
-                          value={parentId}
-                          placeholder="ParentId"
-                          onChange={(e) => setParentId(e.target.value)}
-                        />
-                      </AccordionDetails>
-                    </Accordion>
-                  </Box>
+                  <>
+                    <Box>
+                      <Accordion key={index}>
+                        <AccordionSummary expandIcon={"🔼"}>
+                          <Typography variant="h5">
+                            {node.id} - {node.name}
+                          </Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                          {node.parentId !== node.id ? (
+                            <Typography>No hay subnodos</Typography>
+                          ) : (
+                            <Typography>{node.parentId}</Typography>
+                          )}
+                          <Button variant="contained" onClick={AddElement}>
+                            Añadir nodo
+                          </Button>
+                          <br />
+                          <br />
+                          <input
+                            type="text"
+                            value={name}
+                            placeholder="Nombre"
+                            onChange={(e) => setName(e.target.value)}
+                          />
+                          <input
+                            type="text"
+                            value={parentId}
+                            placeholder="ParentId"
+                            onChange={(e) => setParentId(e.target.value)}
+                          />
+                        </AccordionDetails>
+                      </Accordion>
+                    </Box>
+                  </>
                 );
               })
             ) : (
-              <></>
+              <>
+                <br />
+                <br />
+                <Button variant="contained" onClick={AddElement}>
+                  Añadir nodo
+                </Button>
+                <br />
+                <br />
+                <input
+                  type="text"
+                  value={name}
+                  placeholder="Nombre"
+                  onChange={(e) => setName(e.target.value)}
+                />
+                <input
+                  type="text"
+                  value={parentId}
+                  placeholder="ParentId"
+                  onChange={(e) => setParentId(e.target.value)}
+                />
+              </>
             )}
           </Box>
         </Grid>
