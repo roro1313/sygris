@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Accordion,
   AccordionDetails,
@@ -6,25 +6,24 @@ import {
   Box,
   Button,
   Typography,
+  CardContent,
+  Grid,
+  Paper,
+  TextField,
 } from "@mui/material";
-import Grid from "@mui/material/Unstable_Grid2";
 import "./App.css";
-import ContainerList from "./components/ContainerList";
+import * as Styles from "./Styles";
+import InteractionMenu from "./components/InteractionMenu/InteractionMenu";
 
 function App() {
   const [token, setToken] = useState("");
   const [nodes, setNodes] = useState("");
+  const [totalNodes, setTotalNodes] = useState(0);
+  const [addingMode, setAddingMode] = useState(false);
+  const [deletingMode, setDeletingMode] = useState(false);
   const [name, setName] = useState("");
   const [parentId, setParentId] = useState(0);
-
-  /*   useEffect(() => {
-    fetch("http://20.76.179.252/api/v1/node")
-      .then((res) => res.json())
-      .then((response) => {
-        console.log(response);
-        setNodes(response);
-      });
-  }, [nodes]); */
+  const [id, setId] = useState(0);
 
   const Login = () => {
     fetch("http://20.76.179.252/api/v1/auth/login", {
@@ -58,7 +57,7 @@ function App() {
       .then((res) => res.json())
       .then((response) => {
         setNodes(response);
-        console.log(nodes);
+        setTotalNodes(response.length);
       });
   };
 
@@ -77,97 +76,152 @@ function App() {
     })
       .then((res) => res.json())
       .then((response) => {
-        console.log(response);
+        NodeList();
+        setName("");
+      });
+  };
+
+  const DeleteElement = () => {
+    fetch("http://20.76.179.252/api/v1/node/" + parseInt(id), {
+      method: "DELETE",
+      headers: {
+        accept: "*/*",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((response) => {
+        NodeList();
+        setId(0);
       });
   };
 
   return (
     <>
-      <Grid container spacing={2} minHeight={160} disableEqualOverflow>
+      <InteractionMenu
+        setAddingMode={setAddingMode}
+        setDeletingMode={setDeletingMode}
+      />
+      <Grid container spacing={3}>
         <Grid
+          item
           xs={12}
-          md={8}
-          display="block"
-          justifyContent="center"
-          alignItems="center"
+          md={12}
+          textAlign={"center"}
+          justifyContent={"center"}
         >
           <Box>
-            {token.length === 0 && (
-              <Button variant="contained" onClick={Login}>
-                LOGIN
-              </Button>
-            )}
-            <Button variant="contained" onClick={NodeList}>
-              SHOW FULL LIST
-            </Button>
-          </Box>
-          <Box>
-            {nodes.length !== 0 ? (
-              Object.values(nodes).map((node, index) => {
-                return (
-                  <>
-                    <Box>
-                      <Accordion key={index}>
-                        <AccordionSummary expandIcon={"🔼"}>
-                          <Typography variant="h5">
-                            {node.id} - {node.name}
-                          </Typography>
-                        </AccordionSummary>
-                        <AccordionDetails>
-                          {node.parentId !== node.id ? (
-                            <Typography>No hay subnodos</Typography>
-                          ) : (
-                            <Typography>{node.parentId}</Typography>
-                          )}
-                          <Button variant="contained" onClick={AddElement}>
-                            Añadir nodo
-                          </Button>
-                          <br />
-                          <br />
-                          <input
-                            type="text"
-                            value={name}
-                            placeholder="Nombre"
-                            onChange={(e) => setName(e.target.value)}
-                          />
-                          <input
-                            type="text"
-                            value={parentId}
-                            placeholder="ParentId"
-                            onChange={(e) => setParentId(e.target.value)}
-                          />
-                        </AccordionDetails>
-                      </Accordion>
-                    </Box>
-                  </>
-                );
-              })
-            ) : (
-              <>
-                <br />
-                <br />
-                <Button variant="contained" onClick={AddElement}>
-                  Añadir nodo
-                </Button>
-                <br />
-                <br />
-                <input
-                  type="text"
-                  value={name}
-                  placeholder="Nombre"
-                  onChange={(e) => setName(e.target.value)}
-                />
-                <input
-                  type="text"
-                  value={parentId}
-                  placeholder="ParentId"
-                  onChange={(e) => setParentId(e.target.value)}
-                />
-              </>
-            )}
+            <CardContent>
+              <Typography
+                sx={{ fontSize: 14 }}
+                color="text.secondary"
+                gutterBottom
+              >
+                Prueba técnica Sygris front end
+              </Typography>
+              <Typography variant="h5" component="div">
+                ¡Hola!
+              </Typography>
+              <Typography variant="body2">
+                Pulsa el botón para iniciar sesión y poder visualizar el
+                contenido
+              </Typography>
+            </CardContent>
           </Box>
         </Grid>
+        <Grid
+          item
+          xs={12}
+          md={12}
+          textAlign={"center"}
+          justifyContent={"center"}
+        >
+          {token.length === 0 ? (
+            <>
+              <Button size="large" variant="outlined" onClick={Login}>
+                Iniciar sesión
+              </Button>
+              <Button size="large" variant="outlined" disabled>
+                Ver lista de nodos
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button size="large" variant="outlined" disabled>
+                Iniciar sesión
+              </Button>
+              <Button size="large" variant="outlined" onClick={NodeList}>
+                Ver lista de nodos
+              </Button>
+              <Typography>Total nodos cargados: {totalNodes}</Typography>
+            </>
+          )}
+        </Grid>
       </Grid>
+      <Box textAlign={"center"} justifyContent={"center"}>
+        {addingMode && (
+          <>
+            <br />
+            <br />
+            <TextField
+              id="name"
+              label="Node"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+            <TextField
+              id="outlined-parentId"
+              label="Parent Id"
+              value={parentId}
+              onChange={(e) => setParentId(e.target.value)}
+            />
+            <br />
+            <br />
+            <Button variant="contained" onClick={AddElement}>
+              Añadir nodo
+            </Button>
+          </>
+        )}
+        <br />
+        <br />
+        {deletingMode && (
+          <>
+            <br />
+            <br />
+            <TextField
+              id="outlined-id"
+              label="Id"
+              value={id}
+              onChange={(e) => setId(e.target.value)}
+            />
+            <br />
+            <br />
+            <Button variant="contained" onClick={DeleteElement}>
+              Eliminar nodo
+            </Button>
+            <br />
+            <br />
+          </>
+        )}
+      </Box>
+      {nodes.length !== 0 &&
+        Object.values(nodes).map((node, index) => {
+          return (
+            <>
+              <Accordion key={index}>
+                <AccordionSummary expandIcon={"🔼"}>
+                  <Typography variant="h5">
+                    {node.id} - {node.name}
+                  </Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <Typography>Parent ID: {node.parentId}</Typography>
+                </AccordionDetails>
+              </Accordion>
+            </>
+          );
+        })}
     </>
   );
 }
