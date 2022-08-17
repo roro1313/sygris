@@ -57,7 +57,7 @@ function App() {
       .then((res) => res.json())
       .then((response) => {
         setNodes(response);
-        setTotalNodes(response.length);
+		setTotalNodes(response.length);
       });
   };
 
@@ -92,7 +92,7 @@ function App() {
     })
       .then((res) => res.json())
       .then((response) => {
-        NodeList();
+		NodeList();
         setId(0);
       });
   };
@@ -154,7 +154,7 @@ function App() {
               <Button size="large" variant="outlined" onClick={NodeList}>
                 Ver lista de nodos
               </Button>
-              <Typography>Total nodos cargados: {totalNodes}</Typography>
+			  <Typography>Total nodos cargados: {totalNodes}</Typography>
             </>
           )}
         </Grid>
@@ -178,9 +178,9 @@ function App() {
             />
             <br />
             <br />
-            <Button variant="contained" onClick={AddElement}>
+            <Styles.CustomButton variant="contained" onClick={AddElement}>
               Añadir nodo
-            </Button>
+            </Styles.CustomButton>
           </>
         )}
         <br />
@@ -197,10 +197,10 @@ function App() {
             />
             <br />
             <br />
-            <Button variant="contained" onClick={DeleteElement}>
+            <Styles.CustomButton variant="contained" onClick={DeleteElement}>
               Eliminar nodo
-            </Button>
-            <br />
+            </Styles.CustomButton>
+			<br />
             <br />
           </>
         )}
